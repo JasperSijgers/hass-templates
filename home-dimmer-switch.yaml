@@ -1,0 +1,97 @@
+blueprint:
+  name: Philips Hue Dimmer Switch
+  description: Use a Hue Dimmer Switch to control a light (group)
+  domain: automation
+  author: Jasper Sijgers
+  input:
+    light_target:
+      name: Light
+      selector:
+        entity:
+          domain:
+            - light
+          multiple: true
+    dimmer_switch:
+      name: Hue Dimmer Switch
+      selector:
+        device:
+          integration: hue
+          entity:
+            device_class: battery
+            domain: sensor
+
+mode: single
+
+trigger:
+  - device_id: !input dimmer_switch
+    domain: hue
+    platform: device
+    type: short_release
+    subtype: 1
+    unique_id: 882b5ad6-ca1f-485e-b8cb-43eed9729a9d
+    id: btn1
+  - device_id: !input dimmer_switch
+    domain: hue
+    platform: device
+    type: short_release
+    subtype: 2
+    unique_id: a581507c-ebc9-4a7a-aba5-fc088c94c7dd
+    id: btn2
+  - device_id: !input dimmer_switch
+    domain: hue
+    platform: device
+    type: short_release
+    subtype: 3
+    unique_id: c18df2d1-caab-4654-b833-88777a2d45e5
+    id: btn3
+  - device_id: !input dimmer_switch
+    domain: hue
+    platform: device
+    type: short_release
+    subtype: 4
+    unique_id: d4bb98b7-a6b2-4627-9515-e863eef3f32d
+    id: btn4
+
+condition: []
+
+action:
+  - if:
+      - condition: trigger
+        id:
+          - btn1
+    then:
+      - service: light.toggle
+        target:
+          entity_id: !input light_target
+        data: {}
+  - if:
+      - condition: trigger
+        id:
+          - btn2
+    then:
+      - service: light.turn_on
+        metadata: {}
+        data:
+          brightness_step_pct: 10
+        target:
+          entity_id: !input light_target
+  - if:
+      - condition: trigger
+        id:
+          - btn3
+    then:
+      - service: light.turn_on
+        metadata: {}
+        data:
+          brightness_step_pct: -10
+        target:
+          entity_id: !input light_target
+  - if:
+      - condition: trigger
+        id:
+          - btn4
+    then:
+      - service: light.turn_off
+        target:
+          entity_id: !input light_target
+        data: {}
